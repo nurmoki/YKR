@@ -20,12 +20,6 @@ library('sf')
 library('readr')
 library('dplyr')
 
-#Path to zip-file containing YKR-data as csv-files
-file_path = "path/to/zipfile"
-
-#Set output folder
-out_path = "out/path/for/geopackages/"
-
 
 #Define function to read csv-files from zip-files and to convert them to geopackage.
 csv_to_geopackage <- function(zip_file, out_path, geom = FALSE, polygons = FALSE, combine = FALSE) {
@@ -44,8 +38,6 @@ csv_to_geopackage <- function(zip_file, out_path, geom = FALSE, polygons = FALSE
              progress = FALSE, guess_max = 10000, 
              col_types = col_types) %>%
       mutate(across(.cols = !any_of(names(col_types$cols)), ~parse_guess(., guess_integer = TRUE))) %>%
-      
-      glimpse(.) %>%
       
       {if (geom && select(., ends_with("xyind")) %>% anyNA() == FALSE) #Check if NA-coordinates from xyind column
         
@@ -74,11 +66,18 @@ csv_to_geopackage <- function(zip_file, out_path, geom = FALSE, polygons = FALSE
   }, zip_file)
 }
 
+#Path to zip-file containing YKR-data as csv-files
+file_path = "path/to/zipfile"
+
+#Set output folder
+out_path = "out/path/for/geopackages/"
 
 #Run function for one zip-file.
 csv_to_geopackage(file_path, out_path = out_path)
 
+
 #Run for all zip-files in specified folder
+ykr_path <- "foler/with/zipfiles/"
 ykr_zip_files <- list.files(path = ykr_path, pattern = ".zip$", full.names = TRUE) #List all zip-files in specified folder
 lapply(ykr_zip_files, csv_to_geopackage, out_path = out_path)
 
