@@ -66,7 +66,7 @@ csv_to_geopackage <- function(zip_file, out_path, geom = FALSE, polygons = FALSE
   }, zip_file)
 }
 
-#Path to zip-file containing YKR-data as csv-files
+#Set path to zip-file containing YKR-data as csv-files
 file_path = "path/to/zipfile"
 
 #Set output folder
@@ -76,7 +76,7 @@ out_path = "out/path/for/geopackages/"
 csv_to_geopackage(file_path, out_path = out_path)
 
 
-#Run for all zip-files in specified folder
+#Optionally run for all zip-files in specified folder
 ykr_path <- "foler/with/zipfiles/"
 ykr_zip_files <- list.files(path = ykr_path, pattern = ".zip$", full.names = TRUE) #List all zip-files in specified folder
 lapply(ykr_zip_files, csv_to_geopackage, out_path = out_path)
