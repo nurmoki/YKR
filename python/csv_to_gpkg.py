@@ -9,6 +9,8 @@ Technical notes:
   a bit inconsistent data types in output layers. Pyogrio do not allow append, this complicates script a bit.
 
 Params:
+    file_path: path to zipfile
+    out_path: output folder
     geom: default False, if True creates geometries, defaults to points. Not valid for data that contains null-coordinates.
     polygon: default False, if True creates 250m-polygon geometries, valid only when geom is True
     combine: default False, if True creates one layer with all the years instead of yearly layers. Non-coordinate ykr-tables written separately always.
