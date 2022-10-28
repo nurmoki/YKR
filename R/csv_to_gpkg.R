@@ -3,10 +3,9 @@
 # Reads data from ykr-zipfiles, Creates geopackages to the spesified folder and uploads data to the created geopackages 
 
 # Technical notes: 
-  # common columns in every table are forced to certain types in read_scv --> col_types. 
-  # Table specific columns are character by default but with guess_parser converted to correct type
-  # For numeric values result is usually int
-  # For non-coordinate tables geometries cannot be created (e.g tables with non-coordinate YKR-data and commuting data)
+  # Common columns in every table are forced to correct types. Table specific columns are guessed by parser
+  # For non or NA-coordinate tables geometries are not created (e.g tables with non-coordinate YKR-data and commuting data (9-tables, ykr_tmatka))
+  # These will result as non-spatial geopackage tables.
   # Using readr functions because of speed but cannot utilize csvt-files as in gdal
 
 # Parameters:
@@ -43,7 +42,7 @@ csv_to_geopackage <- function(zip_file, out_path, geom = FALSE, polygons = FALSE
         
         if (polygons) {
           xy <- select(., x, y)
-
+          
           sfg.list <- unname(apply(xy, 1, function(i, j) { #Create rectangular polygons
             st_polygon(list(matrix(
               c(i[1] + j, i[1] - j, i[1] - j, i[1] + j, i[1] + j,
@@ -59,9 +58,10 @@ csv_to_geopackage <- function(zip_file, out_path, geom = FALSE, polygons = FALSE
         }
         else .
       } %>%
-        st_write(.,
-                 paste0(out_path, tools::file_path_sans_ext(basename(zip_file)),".gpkg"),
-                 layer = tools::file_path_sans_ext(basename(if_else(combine, zip_file, b))), append = combine)
+      st_write(.,
+               paste0(out_path, tools::file_path_sans_ext(basename(zip_file)),".gpkg"),
+               layer = tools::file_path_sans_ext(basename(if_else(combine && !endsWith(b, "_9.csv"), zip_file, b))), 
+               append = combine && !endsWith(b, "_9.csv"))
     
   }, zip_file)
 }
