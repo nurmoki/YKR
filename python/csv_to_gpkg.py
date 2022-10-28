@@ -29,7 +29,7 @@ file_path = "path/to/zipfile"
 out_path = "out/path/for/geopackages/"
 
 #Define function to convert csv-files in zip to geopackages
-def csv_to_geopackage(file_path, geom=False, combine=False, polygon=False):
+def csv_to_geopackage(file_path, out_path, geom=False, combine=False, polygon=False):
     csv_zip = zf.ZipFile(file_path)
     csv_in_zip = csv_zip.namelist()
     csv_in_zip = [string for string in csv_in_zip if string.endswith('.csv')]
@@ -80,11 +80,11 @@ def csv_to_geopackage(file_path, geom=False, combine=False, polygon=False):
         list(csv_reader(csv_in_zip, out_path))
 
 #Execute function for one zip-file
-csv_to_geopackage(file_path)
+csv_to_geopackage(file_path, out_path)
 
 #Optionally execute function for all YKR-zip files in a directory
 import glob
 zip_list = glob.glob("path/folder/zipfiles/*.zip") #List zip-files in folder
-[csv_to_geopackage(s, geom=True) for s in zip_list]
+[csv_to_geopackage(s, out_path=out_path, geom=True) for s in zip_list]
 
 
