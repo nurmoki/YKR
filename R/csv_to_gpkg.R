@@ -1,6 +1,7 @@
 ### Convert zipped YKR-data (csv) to geopackage tables ###
 
-# Reads data from ykr-zipfiles, Creates geopackages to the spesified folder and uploads data to the created geopackages 
+# Reads data from ykr-zipfiles, Creates geopackages to the spesified folder and uploads data to the created geopackages
+# Requirements: sf, readr, dplyr
 
 # Technical notes: 
   # Common columns in every table are forced to correct types. Table specific columns are guessed by parser
@@ -77,7 +78,7 @@ csv_to_geopackage(file_path, out_path = out_path)
 
 
 #Optionally run for all zip-files in specified folder
-ykr_path <- "foler/with/zipfiles/"
+ykr_path <- "folder/with/zipfiles/"
 ykr_zip_files <- list.files(path = ykr_path, pattern = ".zip$", full.names = TRUE) #List all zip-files in specified folder
 lapply(ykr_zip_files, csv_to_geopackage, out_path = out_path)
 

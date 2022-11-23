@@ -2,6 +2,8 @@
 """
 Reads data from ykr-zipfile and creates a geopackage
 
+Requirements: pandas, zipfile, geopandas, pathlib, shapely and blod if used for all zip-files simultaneously
+
 Technical notes: 
   Common columns in every table are forced to correct types. Table specific columns are guessed by parser
   For non-coordinate tables geometries are not created (e.g tables with non-coordinate YKR-data and commuting data (9-tables, ykr_tmatka))
@@ -24,11 +26,6 @@ import geopandas as gp
 from pathlib import Path
 from shapely import geometry
 
-#Path to zip-file containing YKR-data as csv-files
-file_path = "path/to/zipfile"
-
-#Set output folder
-out_path = "out/path/for/geopackages/"
 
 #Define function to convert csv-files in zip to geopackages
 def csv_to_geopackage(file_path, out_path, geom=False, combine=False, polygon=False):
@@ -43,6 +40,7 @@ def csv_to_geopackage(file_path, out_path, geom=False, combine=False, polygon=Fa
         """
         
         for file in csv_in_zip:
+            print(file)
             df_gen = pd.read_csv(csv_zip.open(file),
                               dtype = {'xyind': str,
                                        'axyind' : str,
@@ -51,8 +49,7 @@ def csv_to_geopackage(file_path, out_path, geom=False, combine=False, polygon=Fa
                                        'akunta' : str,
                                        'tkunta' : str
                                        })
-            print(file)
-                
+            
             df_gen = df_gen.astype({col: 'int32' for col in df_gen.select_dtypes('int64').columns})
             
             if geom and df_gen.filter(regex = "^xyind").notna().any(axis=None): #Write geoms use geopandas if table with valid geometries
@@ -81,12 +78,17 @@ def csv_to_geopackage(file_path, out_path, geom=False, combine=False, polygon=Fa
     else:
         list(csv_reader(csv_in_zip, out_path))
 
+#Set path to zip-file containing YKR-data as csv-files
+file_path = "path/to/zipfile"
+
+#Set output folder
+out_path = "out/path/for/geopackages/"
+
 #Execute function for one zip-file
 csv_to_geopackage(file_path, out_path)
 
 #Optionally execute function for all YKR-zip files in a directory
 import glob
-zip_list = glob.glob("path/folder/zipfiles/*.zip") #List zip-files in folder
+zip_list = glob.glob("folder/with/zipfiles/*.zip") #List zip-files in folder
 [csv_to_geopackage(s, out_path=out_path, geom=True) for s in zip_list]
-
 
